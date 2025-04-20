@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Controller Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #121212;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      max-width: 500px;
+      margin: 0 auto 1.5rem;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    a.button {
+      padding: 0.8rem 1.5rem;
+      background: #1e88e5;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    a.button:hover {
+      background: #1565c0;
+    }
+    footer {
+      position: absolute;
+      bottom: 1rem;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Virtual Controller Overlay</h1>
+  <p>
+    Add customizable buttons and joysticks to any webpage for mobile game simulation or accessibility.<br>
+    Drag, assign keys, adjust transparency, tint, and save/load your layouts.
+  </p>
+  <a class="button" href="javascript:(function(){var s=document.createElement('script');s.src='https://yourusername.github.io/virtual-controller/controller.js';document.body.appendChild(s);})();">Activate Overlay</a>
+
+  <footer>
+    Built for GitHub Pages | Customize your mobile input!
+  </footer>
+</body>
+</html>
