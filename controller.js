@@ -2,14 +2,12 @@
   if (window.vcLoaded) return;
   window.vcLoaded = true;
 
-  // Load settings from localStorage
   const loadSettings = () => {
     try {
       return JSON.parse(localStorage.getItem("vc_settings") || '{"joysticks": [], "buttons": [], "transparency": 0.4, "tint": "#000000"}');
     } catch (e) { return {}; }
   };
 
-  // Save settings to localStorage
   const saveSettings = (settings) => {
     localStorage.setItem("vc_settings", JSON.stringify(settings));
   };
@@ -24,13 +22,13 @@
     btn.style.position = "fixed";
     btn.style.left = x + "px";
     btn.style.top = y + "px";
-    btn.style.width = "60px";
-    btn.style.height = "60px";
+    btn.style.width = "12vw";
+    btn.style.height = "12vw";
     btn.style.background = `rgba(255,255,255,${settings.transparency})`;
     btn.style.color = "#000";
     btn.style.borderRadius = "50%";
     btn.style.textAlign = "center";
-    btn.style.lineHeight = "60px";
+    btn.style.lineHeight = "12vw";
     btn.style.zIndex = 999999;
     btn.style.touchAction = "none";
 
@@ -50,8 +48,8 @@
     joystick.style.position = "fixed";
     joystick.style.left = x + "px";
     joystick.style.top = y + "px";
-    joystick.style.width = "80px";
-    joystick.style.height = "80px";
+    joystick.style.width = "16vw";
+    joystick.style.height = "16vw";
     joystick.style.background = `rgba(255,255,255,${settings.transparency})`;
     joystick.style.borderRadius = "50%";
     joystick.style.border = "3px solid #ccc";
@@ -59,8 +57,8 @@
 
     const thumb = document.createElement("div");
     thumb.style.position = "absolute";
-    thumb.style.width = "40px";
-    thumb.style.height = "40px";
+    thumb.style.width = "8vw";
+    thumb.style.height = "8vw";
     thumb.style.backgroundColor = "#00bcd4";
     thumb.style.borderRadius = "50%";
     thumb.style.left = "50%";
@@ -71,18 +69,19 @@
     let isDragging = false;
     let startX = 0, startY = 0;
 
-    joystick.onpointerdown = (e) => {
+    joystick.ontouchstart = (e) => {
+      e.preventDefault();
       isDragging = true;
-      startX = e.clientX - joystick.offsetLeft;
-      startY = e.clientY - joystick.offsetTop;
-      document.addEventListener("pointermove", moveJoystick);
-      document.addEventListener("pointerup", stopJoystick);
+      startX = e.touches[0].clientX - joystick.offsetLeft;
+      startY = e.touches[0].clientY - joystick.offsetTop;
+      document.addEventListener("touchmove", moveJoystick);
+      document.addEventListener("touchend", stopJoystick);
     };
 
     function moveJoystick(e) {
       if (!isDragging) return;
-      joystick.style.left = e.clientX - startX + "px";
-      joystick.style.top = e.clientY - startY + "px";
+      joystick.style.left = e.touches[0].clientX - startX + "px";
+      joystick.style.top = e.touches[0].clientY - startY + "px";
 
       const moveEvent = new KeyboardEvent("keydown", { key: keyLeft });
       document.dispatchEvent(moveEvent);
@@ -90,8 +89,8 @@
 
     function stopJoystick() {
       isDragging = false;
-      document.removeEventListener("pointermove", moveJoystick);
-      document.removeEventListener("pointerup", stopJoystick);
+      document.removeEventListener("touchmove", moveJoystick);
+      document.removeEventListener("touchend", stopJoystick);
     }
 
     document.body.appendChild(joystick);
@@ -99,10 +98,10 @@
   };
 
   // Default controls
-  makeButton("A", 50, window.innerHeight - 100, "a");
-  makeButton("B", 120, window.innerHeight - 100, "b");
+  makeButton("A", 5, window.innerHeight - 20, "a");
+  makeButton("B", 20, window.innerHeight - 20, "b");
 
-  makeJoystick(50, window.innerHeight - 200, "ArrowLeft", "ArrowRight");
+  makeJoystick(5, window.innerHeight - 50, "ArrowLeft", "ArrowRight");
 
   // Settings page to manage layout
   const settingsPage = document.createElement("div");
@@ -150,13 +149,13 @@
   toggleSettings.style.position = "fixed";
   toggleSettings.style.bottom = "10px";
   toggleSettings.style.right = "10px";
-  toggleSettings.style.width = "50px";
-  toggleSettings.style.height = "50px";
+  toggleSettings.style.width = "12vw";
+  toggleSettings.style.height = "12vw";
   toggleSettings.style.borderRadius = "50%";
   toggleSettings.style.background = "rgba(0,0,0,0.6)";
   toggleSettings.style.color = "white";
   toggleSettings.style.textAlign = "center";
-  toggleSettings.style.lineHeight = "50px";
+  toggleSettings.style.lineHeight = "12vw";
   toggleSettings.style.zIndex = 99999999;
   toggleSettings.onclick = () => {
     settingsPage.style.display = settingsPage.style.display === "none" ? "block" : "none";
