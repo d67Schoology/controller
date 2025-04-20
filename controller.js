@@ -20,8 +20,8 @@
     const btn = document.createElement("div");
     btn.textContent = label;
     btn.style.position = "fixed";
-    btn.style.left = x + "px";
-    btn.style.top = y + "px";
+    btn.style.left = `${x}px`;
+    btn.style.top = `${y}px`;
     btn.style.width = "12vw";
     btn.style.height = "12vw";
     btn.style.background = `rgba(255,255,255,${settings.transparency})`;
@@ -31,8 +31,8 @@
     btn.style.lineHeight = "12vw";
     btn.style.zIndex = 999999;
     btn.style.touchAction = "none";
-
-    btn.onpointerdown = () => {
+    
+    btn.onclick = () => {
       const down = new KeyboardEvent("keydown", { key });
       const up = new KeyboardEvent("keyup", { key });
       document.dispatchEvent(down);
@@ -46,8 +46,8 @@
   const makeJoystick = (x, y, keyLeft, keyRight) => {
     const joystick = document.createElement("div");
     joystick.style.position = "fixed";
-    joystick.style.left = x + "px";
-    joystick.style.top = y + "px";
+    joystick.style.left = `${x}px`;
+    joystick.style.top = `${y}px`;
     joystick.style.width = "16vw";
     joystick.style.height = "16vw";
     joystick.style.background = `rgba(255,255,255,${settings.transparency})`;
@@ -97,13 +97,13 @@
     joysticks.push({ x, y, keyLeft, keyRight });
   };
 
-  // Default controls
+  // Default controls (buttons, joysticks)
   makeButton("A", 5, window.innerHeight - 20, "a");
   makeButton("B", 20, window.innerHeight - 20, "b");
 
   makeJoystick(5, window.innerHeight - 50, "ArrowLeft", "ArrowRight");
 
-  // Settings page to manage layout
+  // Settings page to manage layout and key bindings
   const settingsPage = document.createElement("div");
   settingsPage.style.position = "fixed";
   settingsPage.style.top = "10%";
@@ -135,31 +135,74 @@
     saveSettings(settings);
   };
 
+  const addJoystickButton = document.createElement("button");
+  addJoystickButton.textContent = "Add Joystick";
+  addJoystickButton.onclick = () => {
+    makeJoystick(50, window.innerHeight - 150, "ArrowUp", "ArrowDown");
+    settings.joysticks.push({ x: 50, y: window.innerHeight - 150, keyLeft: "ArrowUp", keyRight: "ArrowDown" });
+    saveSettings(settings);
+  };
+
+  const addButtonButton = document.createElement("button");
+  addButtonButton.textContent = "Add Button";
+  addButtonButton.onclick = () => {
+    makeButton("X", 50, window.innerHeight - 50, "x");
+    settings.buttons.push({ label: "X", x: 50, y: window.innerHeight - 50, key: "x" });
+    saveSettings(settings);
+  };
+
   const closeSettings = document.createElement("button");
   closeSettings.textContent = "Close Settings";
   closeSettings.onclick = () => settingsPage.style.display = "none";
 
   settingsPage.appendChild(transparencySlider);
   settingsPage.appendChild(tintPicker);
+  settingsPage.appendChild(addJoystickButton);
+  settingsPage.appendChild(addButtonButton);
   settingsPage.appendChild(closeSettings);
   document.body.appendChild(settingsPage);
 
-  const toggleSettings = document.createElement("div");
-  toggleSettings.textContent = "⚙️";
-  toggleSettings.style.position = "fixed";
-  toggleSettings.style.bottom = "10px";
-  toggleSettings.style.right = "10px";
-  toggleSettings.style.width = "12vw";
-  toggleSettings.style.height = "12vw";
-  toggleSettings.style.borderRadius = "50%";
-  toggleSettings.style.background = "rgba(0,0,0,0.6)";
-  toggleSettings.style.color = "white";
-  toggleSettings.style.textAlign = "center";
-  toggleSettings.style.lineHeight = "12vw";
-  toggleSettings.style.zIndex = 99999999;
-  toggleSettings.onclick = () => {
+  const settingsButton = document.createElement("div");
+  settingsButton.textContent = "⚙️";
+  settingsButton.style.position = "fixed";
+  settingsButton.style.bottom = "10px";
+  settingsButton.style.right = "10px";
+  settingsButton.style.width = "12vw";
+  settingsButton.style.height = "12vw";
+  settingsButton.style.borderRadius = "50%";
+  settingsButton.style.background = "rgba(0,0,0,0.6)";
+  settingsButton.style.color = "white";
+  settingsButton.style.textAlign = "center";
+  settingsButton.style.lineHeight = "12vw";
+  settingsButton.style.zIndex = 99999999;
+  settingsButton.onclick = () => {
     settingsPage.style.display = settingsPage.style.display === "none" ? "block" : "none";
   };
-  document.body.appendChild(toggleSettings);
-})();
+  
+  // Make the settings button draggable
+  let isSettingsButtonDragging = false;
+  let settingsStartX = 0, settingsStartY = 0;
+  
+  settingsButton.ontouchstart = (e) => {
+    e.preventDefault();
+    isSettingsButtonDragging = true;
+    settingsStartX = e.touches[0].clientX - settingsButton.offsetLeft;
+    settingsStartY = e.touches[0].clientY - settingsButton.offsetTop;
+    document.addEventListener("touchmove", moveSettingsButton);
+    document.addEventListener("touchend", stopSettingsButton);
+  };
 
+  function moveSettingsButton(e) {
+    if (!isSettingsButtonDragging) return;
+    settingsButton.style.left = e.touches[0].clientX - settingsStartX + "px";
+    settingsButton.style.top = e.touches[0].clientY - settingsStartY + "px";
+  }
+
+  function stopSettingsButton() {
+    isSettingsButtonDragging = false;
+    document.removeEventListener("touchmove", moveSettingsButton);
+    document.removeEventListener("touchend", stopSettingsButton);
+  }
+
+  document.body.appendChild(settingsButton);
+})();
